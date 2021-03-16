@@ -1,5 +1,8 @@
 package softuniBlog.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
+
 import javax.persistence.*;
 import java.sql.Blob;
 import java.util.HashSet;
@@ -7,16 +10,39 @@ import java.util.Objects;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 @Table(name = "users")
 public class User {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Column(name = "user_emails", unique = true, nullable = false)
     private String email;
+
+    @Column(name = "user_fullNames",  nullable = false)
     private String fullName;
+
+    @Column(name = "user_passwords", length = 60, nullable = false)
     private String password;
+
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_roles")
     private Set<Role> roles;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "author")
     private Set<Article> articles;
+
+    @Column(name = "reset_password_token")
     private String resetPasswordToken;
+
+
+    @Column(name = "user_photos")
     private byte[] photos;
 
     public User(String email, String fullName, String password) {
@@ -27,85 +53,8 @@ public class User {
         this.articles = new HashSet<>();
     }
 
-    public User() {
-    }
-
-    @Lob
-    public byte[] getPhotos() {
-        return photos;
-    }
-
-    public void setPhotos(byte[] photos) {
-        this.photos = photos;
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    @Column(name = "email", unique = true, nullable = false)
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    @Column(name = "fullName",  nullable = false)
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    @Column(name = "password", length = 60, nullable = false)
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Column(name = "reset_password_token")
-    public String getResetPasswordToken() {
-        return resetPasswordToken;
-    }
-
-    public void setResetPasswordToken(String resetPasswordToken) {
-        this.resetPasswordToken = resetPasswordToken;
-    }
-
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles")
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
     public void addRole(Role role){
         this.roles.add(role);
-    }
-
-    @OneToMany(mappedBy = "author")
-    public Set<Article> getArticles() {
-        return articles;
-    }
-
-    public void setArticles(Set<Article> articles) {
-        this.articles = articles;
     }
 
 

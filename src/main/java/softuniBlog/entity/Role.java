@@ -1,5 +1,10 @@
 package softuniBlog.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
@@ -7,47 +12,28 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "roles")
+@Getter
+@Setter
+@Table(name = "t_roles")
 public class Role {
 
-    private Integer id;
-    private String name;
-    private Set<User> users;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    public Role() {
-        this.users = new HashSet<>();
-    }
+  @Column(name = "role_name", nullable = false)
+  private String name;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Integer getId() {
-        return id;
-    }
+  @JsonIgnore
+  @ManyToMany(mappedBy = "roles")
+  private Set<User> users;
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public Role() {
+    this.users = new HashSet<>();
+  }
 
-    @Column(name = "name" , nullable = false)
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @ManyToMany(mappedBy = "roles")
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
-
-    @Transient
-    public String getSimpleName(){
-        return StringUtils.capitalize(this.getName().substring(5).toLowerCase());
-    }
+  @Transient
+  public String getSimpleName() {
+    return StringUtils.capitalize(this.getName().substring(5).toLowerCase());
+  }
 }

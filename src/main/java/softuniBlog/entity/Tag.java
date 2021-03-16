@@ -1,52 +1,32 @@
 package softuniBlog.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "tags")
+@Getter
+@Setter
+@NoArgsConstructor
+@Table(name = "t_tags")
 public class Tag {
 
-    private Integer id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Integer id;
 
-    private String name;
+  @Column(name = "tag_name" ,unique = true, nullable = false)
+  private String name;
 
-    private Set<Article> articles;
+  @JsonIgnore
+  @ManyToMany(mappedBy = "tags")
+  private Set<Article> articles;
 
-    public Tag(String name) {
-        this.name = name;
-        this.articles = new HashSet<>();
-    }
-
-    public Tag() {
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    @Column(unique = true, nullable = false)
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @ManyToMany(mappedBy = "tags")
-    public Set<Article> getArticles() {
-        return articles;
-    }
-
-    public void setArticles(Set<Article> articles) {
-        this.articles = articles;
-    }
+  public Tag(String name) {
+    this.name = name;
+    this.articles = new HashSet<>();
+  }
 }

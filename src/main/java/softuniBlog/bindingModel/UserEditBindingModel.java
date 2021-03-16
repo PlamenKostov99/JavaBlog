@@ -1,8 +1,12 @@
 package softuniBlog.bindingModel;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public class UserEditBindingModel extends UserBindingModel {
 
     private List<Integer> roles;
@@ -11,11 +15,4 @@ public class UserEditBindingModel extends UserBindingModel {
         this.roles = new ArrayList<>();
     }
 
-    public List<Integer> getRoles(){
-        return roles;
-    }
-
-    public void setRoles(List<Integer> roles) {
-        this.roles = roles;
-    }
 }

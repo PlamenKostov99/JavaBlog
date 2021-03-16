@@ -1,28 +1,23 @@
 package softuniBlog.service;
 
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import softuniBlog.bindingModel.ArticleBindingModel;
+import softuniBlog.bindingModel.UserBindingModel;
 import softuniBlog.entity.Article;
+import softuniBlog.exceptions.EntityNotFound;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 
 public interface ArticleService {
 
-    void createArticles(ArticleBindingModel articleBindingModel, @RequestParam("image") MultipartFile file) throws IOException;
+  Article createArticles(
+      ArticleBindingModel articleBindingModel, UserBindingModel userBindingModel, Integer id)
+      throws IOException;
 
-    Article getById(Integer id);
+  Article getById(Integer id);
 
-    void editProcess(ArticleBindingModel articleBindingModel, Integer id, Article article,
-                     @RequestParam("image") MultipartFile file) throws IOException;
+  Article editProcess(ArticleBindingModel articleBindingModel, Integer id) throws IOException;
 
-    void delete(Article article);
+  Article delete(Integer id) throws EntityNotFound;
 
-    boolean existsById(Integer id);
-
-    String getImgUtility(@PathVariable Integer id) throws UnsupportedEncodingException;
-
-    void countClick(@PathVariable Integer id);
+  boolean existsById(Integer id);
 }

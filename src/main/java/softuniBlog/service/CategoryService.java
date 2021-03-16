@@ -11,11 +11,11 @@ public interface CategoryService {
 
     List<Category> getAllCategoriesList();
 
-    void createCategory(CategoryBindingModel name);
+    Category createCategory(CategoryBindingModel name);
 
-    void editCategory(Integer id,CategoryBindingModel name);
+    Category editCategory(Integer id, CategoryBindingModel name);
 
-    void deleteCategory(Integer id);
+    Category deleteCategory(Integer id);
 
     boolean existById(Integer id);
 

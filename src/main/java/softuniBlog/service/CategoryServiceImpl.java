@@ -15,71 +15,76 @@ import java.util.stream.Collectors;
 @Service
 public class CategoryServiceImpl implements CategoryService {
 
-    @Autowired
-    private CategoryRepository categoryRepository;
+  private final CategoryRepository categoryRepository;
 
-    @Autowired
-    private ArticleRepository articleRepository;
+  private final ArticleRepository articleRepository;
 
+  @Autowired
+  public CategoryServiceImpl(
+      CategoryRepository categoryRepository, ArticleRepository articleRepository) {
+    this.categoryRepository = categoryRepository;
+    this.articleRepository = articleRepository;
+  }
 
-    @Override
-    public Category findCategoriesById(Integer id) {
-        return this.categoryRepository.findCategoriesById(id);
+  @Override
+  public Category findCategoriesById(Integer id) {
+    return this.categoryRepository.findCategoriesById(id);
+  }
+
+  @Override
+  public List<Category> getAllCategoriesList() {
+
+    List<Category> categories = this.categoryRepository.findAll();
+
+    categories =
+        categories.stream()
+            .sorted(Comparator.comparingInt(Category::getId))
+            .collect(Collectors.toList());
+
+    return categories;
+  }
+
+  @Override
+  public Category createCategory(CategoryBindingModel categoryBindingModel) {
+
+    Category category = new Category(categoryBindingModel.getName());
+    this.categoryRepository.saveAndFlush(category);
+
+    return category;
+  }
+
+  @Override
+  public Category editCategory(Integer id, CategoryBindingModel categoryBindingModel) {
+
+    Category category = this.categoryRepository.findById(id).orElse(null);
+
+    category.setName(categoryBindingModel.getName());
+
+    this.categoryRepository.saveAndFlush(category);
+
+    return category;
+  }
+
+  @Override
+  public Category deleteCategory(Integer id) {
+
+    Category category = this.categoryRepository.findCategoriesById(id);
+
+    for (Article article : category.getArticles()) {
+      this.articleRepository.delete(article);
     }
+    this.categoryRepository.delete(category);
 
-    @Override
-    public List<Category> getAllCategoriesList() {
+    return category;
+  }
 
-        List<Category> categories = this.categoryRepository.findAll();
+  @Override
+  public boolean existById(Integer id) {
+    return this.categoryRepository.existsById(id);
+  }
 
-        categories = categories.stream().sorted(Comparator.comparingInt(Category::getId))
-                .collect(Collectors.toList());
-
-        return categories;
-    }
-
-    @Override
-    public void createCategory(CategoryBindingModel categoryBindingModel) {
-
-        Category category = new Category(categoryBindingModel.getName());
-        this.categoryRepository.saveAndFlush(category);
-
-
-    }
-
-    @Override
-    public void editCategory(Integer id, CategoryBindingModel categoryBindingModel) {
-
-        Category category = this.categoryRepository.findById(id).orElse(null);
-
-        category.setName(categoryBindingModel.getName());
-
-        this.categoryRepository.saveAndFlush(category);
-
-
-
-    }
-
-    @Override
-    public void deleteCategory(Integer id) {
-
-        Category category =this.categoryRepository.findCategoriesById(id);
-
-        for (Article article: category.getArticles()){
-            this.articleRepository.delete(article);
-        }
-        this.categoryRepository.delete(category);
-
-
-    }
-
-    @Override
-    public boolean existById(Integer id) {
-        return this.categoryRepository.existsById(id);
-    }
-
-    @Override
-    public List<Category> getAll() {
-        return this.categoryRepository.findAll();
-    }
+  @Override
+  public List<Category> getAll() {
+    return this.categoryRepository.findAll();
+  }
 }
